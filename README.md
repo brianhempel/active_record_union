@@ -2,7 +2,7 @@
 
 Use unions on ActiveRecord scopes without ugliness.
 
-If you find yourself writing `pluck(:id)` and then feeding that into another query. you may be able to reduce the number of database requests by using a nested query or a UNION without writing crazy JOIN statements.
+If you find yourself writing `pluck(:id)` and then feeding that into another query, you may be able to reduce the number of database requests by using a nested query or a UNION without writing crazy JOIN statements.
 
 ## Installation
 
