@@ -2,6 +2,8 @@
 
 Use unions on ActiveRecord scopes without ugliness.
 
+If you find yourself writing `pluck(:id)` and then feeding that into another query. you may be able to reduce the number of database requests by using a nested query or a UNION without writing crazy JOIN statements.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,6 +24,8 @@ Or install it yourself as:
 
 ActiveRecordUnion adds a `union` method to `ActiveRecord::Relation` so we can easily gather together queries on mutiple scopes.
 
+Consider some users with posts:
+
 ```ruby
 class User < ActiveRecord::Base
   has_many :posts
@@ -32,7 +36,12 @@ class Post < ActiveRecord::Base
 
   scope :published, -> { where("published_at < ?", Time.now) }
 end
+```
 
+With ActiveRecordUnion, we can do:
+
+```
+# the current user's (draft) posts and all published posts from anyone
 current_user.posts.union(Post.published)
 ```
 
@@ -45,7 +54,8 @@ SELECT "posts".* FROM (
   SELECT "posts".* FROM "posts"  WHERE (published_at < '2014-07-19 16:04:21.918366')
 ) posts
 ```
-Because `union` returns another `ActiveRecord::Relation`, we can run further queries on the union.
+
+Because the `union` method returns another `ActiveRecord::Relation`, we can run further queries on the union.
 
 ```ruby
 current_user.posts.union(Post.published).where(id: [6, 7])
