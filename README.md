@@ -43,7 +43,7 @@ end
 
 With ActiveRecordUnion, we can do:
 
-```
+```ruby
 # the current user's (draft) posts and all published posts from anyone
 current_user.posts.union(Post.published)
 ```
@@ -81,7 +81,7 @@ current_user.posts.union(Post.where("published_at < ?", Time.now))
 
 We can also chain `union` calls to UNION more than two scopes, though the UNIONs will be nested which may not be the prettiest SQL.
 
-```
+```ruby
 user_1.posts.union(user_2.posts).union(Post.published)
 # equivalent to...
 [user_1.posts, user_2.posts, Post.published].inject(:union)
