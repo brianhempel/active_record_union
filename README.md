@@ -6,7 +6,9 @@ Use unions on ActiveRecord scopes without ugliness.
 
 Add this line to your application's Gemfile:
 
-    gem 'active_record_union'
+```ruby
+gem 'active_record_union'
+```
 
 And then execute:
 
@@ -18,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-ActiveRecordUnion adds a `union` method to `ActiveRecord::Relation` so you can easily gather together queries on mutiple scopes.
+ActiveRecordUnion adds a `union` method to `ActiveRecord::Relation` so we can easily gather together queries on mutiple scopes.
 
 ```ruby
 class User < ActiveRecord::Base
@@ -34,7 +36,7 @@ end
 current_user.posts.union(Post.published)
 ```
 
-Which is equivalent to the following SQL (for SQLite):
+Which is equivalent to the following SQL: [<a href="#footnote-1">1</a>]
 
 ```sql
 SELECT "posts".* FROM (
@@ -43,9 +45,7 @@ SELECT "posts".* FROM (
   SELECT "posts".* FROM "posts"  WHERE (published_at < '2014-07-19 16:04:21.918366')
 ) posts
 ```
-(Note: the `?` in the above is bound to the correct value when ActiveRecord executes the query.)
-
-Because `union` returns another `ActiveRecord::Relation`, you can run further queries on the union.
+Because `union` returns another `ActiveRecord::Relation`, we can run further queries on the union.
 
 ```ruby
 current_user.posts.union(Post.published).where(id: [6, 7])
@@ -58,7 +58,7 @@ SELECT "posts".* FROM (
 ) posts  WHERE "posts"."id" IN (6, 7)
 ```
 
-Besides taking a relation, the `union` method also accepts anything that `where` does.
+The `union` method can also accepts anything that `where` does.
 
 ```ruby
 current_user.posts.union("published_at < ?", Time.now)
@@ -66,7 +66,7 @@ current_user.posts.union("published_at < ?", Time.now)
 current_user.posts.union(Post.where("published_at < ?", Time.now))
 ```
 
-You can also chain `union` calls to UNION more than two scopes, though the UNIONs will be nested which may not be the prettiest SQL.
+We can also chain `union` calls to UNION more than two scopes, though the UNIONs will be nested which may not be the prettiest SQL.
 
 ```
 user_1.posts.union(user_2.posts).union(Post.published)
@@ -85,11 +85,13 @@ SELECT "posts".* FROM (
 ) posts
 ```
 
+<a name="footnote-1"></a>[1] Note: the `?` in the SQL is bound to the correct value when ActiveRecord executes the query. Also, the SQL examples here were generated for a SQLite database. The syntax generated for other databases may vary slightly.
+
 ## Another nifty way to reduce extra queries
 
 ActiveRecord already supports turning scopes into nested queries in WHERE clauses. The nested relation defaults to selecting `id` by default.
 
-For example, if a User `has_and_belongs_to_many :favorited_posts`, we can quickly find which of the current user's posts are liked by a certain other user.
+For example, if a user `has_and_belongs_to_many :favorited_posts`, we can quickly find which of the current user's posts are liked by a certain other user.
 
 ```ruby
 current_user.posts.where(id: other_user.favorited_posts)
@@ -104,7 +106,7 @@ SELECT "posts".* FROM "posts"
   )
 ```
 
-If you want to select something other than `id`, use `select` to specify. The following is equivalent to the above, but the query is done against the join table.
+If we want to select something other than `id`, we use `select` to specify. The following is equivalent to the above, but the query is done against the join table.
 
 ```ruby
 current_user.posts.where(id: UserFavoritedPost.where(user_id: other_user.id).select(:post_id))
@@ -125,17 +127,17 @@ SELECT "posts".* FROM "posts"
 
 Why does this gem exist?
 
-Right now in ActiveRecord, if you call `scope.union` you get an `Arel::Nodes::Union` object instead of an `ActiveRecord::Relation`.
+Right now in ActiveRecord, if we call `scope.union` we get an `Arel::Nodes::Union` object instead of an `ActiveRecord::Relation`.
 
-You could call `to_sql` on the Arel object and then use `find_by_sql`, but that's super clean and if the original scopes included an association, then the `to_sql` may produce a query with values that need to be bound (`?`s) and you have to provide those yourself. (E.g. `user.posts.to_sql` produces `SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?`.)
+We could call `to_sql` on the Arel object and then use `find_by_sql`, but that's super clean and if the original scopes included an association, then the `to_sql` may produce a query with values that need to be bound (`?`s) and we have to provide those ourselves. (E.g. `user.posts.to_sql` produces `SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?`.)
 
-While ActiveRecord may sometime have the ability to cleanly perform UNIONs, it's currently stalled. If your interested, the relevant URLs as of July 2014 are:
+While ActiveRecord may sometime have the ability to cleanly perform UNIONs, it's currently stalled. If you're interested, the relevant URLs as of July 2014 are:
 
 https://github.com/rails/rails/issues/939 and
 https://github.com/rails/arel/pull/239 and
 https://github.com/yakaz/rails/commit/29b8ebd187e0888d5e71b2e1e4a12334860bc76c
 
-This is a gem not a Rails pull request because the standard of code quality for a PR is a bit higher, and you'd have to wait for the PR to be merged and relased to use it. That said, the code here is fairly clean and it may end up in a PR sometime.
+This is a gem not a Rails pull request because the standard of code quality for a PR is a bit higher, and we'd have to wait for the PR to be merged and relased to use UNIONs. That said, the code here is fairly clean and it may end up in a PR sometime.
 
 ## License
 
