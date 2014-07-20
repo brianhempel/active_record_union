@@ -1,5 +1,8 @@
 # ActiveRecordUnion
 
+[![Gem Version](https://badge.fury.io/rb/active_record_union.svg)](http://badge.fury.io/rb/active_record_union)
+[![Build Status](https://travis-ci.org/brianhempel/active_record_union.svg)](https://travis-ci.org/brianhempel/active_record_union)
+
 Use unions on ActiveRecord scopes without ugliness.
 
 If you find yourself writing `pluck(:id)` and then feeding that into another query, you may be able to reduce the number of database requests by using a nested query or a UNION without writing crazy JOIN statements.
