@@ -14,7 +14,7 @@ module ActiveRecord
         )
 
         relation = @klass.all.from(from)
-        relation.bind_values = self.bind_values + other.bind_values
+        relation.bind_values = self.bind_values + other.bind_values + relation.bind_values
         relation
       end
 
