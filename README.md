@@ -139,9 +139,9 @@ Why does this gem exist?
 
 Right now in ActiveRecord, if we call `scope.union` we get an `Arel::Nodes::Union` object instead of an `ActiveRecord::Relation`.
 
-We could call `to_sql` on the Arel object and then use `find_by_sql`, but that's super clean and if the original scopes included an association, then the `to_sql` may produce a query with values that need to be bound (`?`s) and we have to provide those ourselves. (E.g. `user.posts.to_sql` produces `SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?`.)
+We could call `to_sql` on the Arel object and then use `find_by_sql`, but that's not super clean and if the original scopes included an association, then the `to_sql` may produce a query with values that need to be bound (represented by `?`s in the SQL) and we have to provide those ourselves. (E.g. `user.posts.to_sql` produces `SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?`.)
 
-While ActiveRecord may sometime have the ability to cleanly perform UNIONs, it's currently stalled. If you're interested, the relevant URLs as of July 2014 are:
+While ActiveRecord may eventually have the ability to cleanly perform UNIONs, it's currently stalled. If you're interested, the relevant URLs as of July 2014 are:
 
 https://github.com/rails/rails/issues/939 and
 https://github.com/rails/arel/pull/239 and
