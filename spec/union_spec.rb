@@ -44,6 +44,21 @@ describe ActiveRecord::Relation do
       expect(bind_values).to eq([1, 2, 3])
     end
 
+    it "doesn't repeat default scopes" do
+      expect(Time).to receive(:now) { Time.utc(2014, 7, 24, 0, 0, 0) }
+
+      class PublishedPost < ActiveRecord::Base
+        self.table_name = "posts"
+        default_scope { where("published_at < ?", Time.now) }
+      end
+
+      union = PublishedPost.where("created_at > ?", Time.utc(2014, 7, 19, 0, 0, 0)).union(User.new.posts)
+
+      expect(union.to_sql).to eq(
+        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\"  WHERE (published_at < '2014-07-24 00:00:00.000000') AND (created_at > '2014-07-19 00:00:00.000000') UNION SELECT \"posts\".* FROM \"posts\"  WHERE \"posts\".\"user_id\" = ? ) posts"
+      )
+    end
+
     context "builds a scope when given" do
       it "a hash" do
         union = User.new.posts.union(id: 1)

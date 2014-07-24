@@ -13,7 +13,7 @@ module ActiveRecord
           Arel::Nodes::SqlLiteral.new(@klass.arel_table.name)
         )
 
-        relation = @klass.all.from(from)
+        relation = @klass.unscoped.from(from)
         relation.bind_values = self.bind_values + other.bind_values + relation.bind_values
         relation
       end
