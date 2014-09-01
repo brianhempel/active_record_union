@@ -1,11 +1,8 @@
 require "active_record_union"
 
-ActiveRecord::Base.establish_connection(
-  adapter:  "sqlite3",
-  database: ":memory:"
-)
+require "support/databases"
 
-require "support/models"
+Databases.connect_to_sqlite
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|

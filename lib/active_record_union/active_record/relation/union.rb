@@ -7,7 +7,15 @@ module ActiveRecord
 
         verify_union_relations!(self, other)
 
-        union = self.arel.union(other)
+        # Postgres allows ORDER BY in the UNION subqueries if each subquery is surrounded by parenthesis
+        # but SQLite does not allow parens around the subqueries; you will have to explicitly do `relation.reorder(nil)` in SQLite
+        if Arel::Visitors::SQLite === self.visitor
+          left, right = self.ast, other.ast
+        else
+          left, right = Arel::Nodes::Grouping.new(self.ast), Arel::Nodes::Grouping.new(other.ast)
+        end
+
+        union = Arel::Nodes::Union.new(left, right)
         from = Arel::Nodes::TableAlias.new(
           union,
           Arel::Nodes::SqlLiteral.new(@klass.arel_table.name)
