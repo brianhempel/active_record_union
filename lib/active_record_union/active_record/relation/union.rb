@@ -19,7 +19,7 @@ module ActiveRecord
       end
 
       private
-      
+
       def verify_union_relations!(*args)
         includes_relations = args.select { |r| r.includes_values.any? }
         if includes_relations.any?

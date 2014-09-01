@@ -7,7 +7,8 @@ end
 
 class Post < ActiveRecord::Base
   connection.create_table :posts, force: true do |t|
-    t.integer :user_id
+    t.integer   :user_id
+    t.timestamp :published_at
     t.timestamps
   end
 
