@@ -23,11 +23,11 @@ module Databases
 
   def connect_to_mysql
     ActiveRecord::Base.establish_connection(
-      adapter:  "mysql"
+      adapter:  "mysql2"
     )
     ActiveRecord::Base.connection.execute('CREATE DATABASE test_active_record_union') rescue nil
     ActiveRecord::Base.establish_connection(
-      adapter:  "mysql",
+      adapter:  "mysql2",
       database: "test_active_record_union"
     )
     load("support/models.rb")
