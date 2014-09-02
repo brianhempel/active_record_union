@@ -159,6 +159,12 @@ https://github.com/yakaz/rails/commit/29b8ebd187e0888d5e71b2e1e4a12334860bc76c
 
 This is a gem not a Rails pull request because the standard of code quality for a PR is a bit higher, and we'd have to wait for the PR to be merged and relased to use UNIONs. That said, the code here is fairly clean and it may end up in a PR sometime.
 
+## Changelog
+
+**1.0.1** - Sept 2, 2014 - Allow ORDER BY in UNION subselects for databases that support it (not SQLite).
+
+**1.0.0** - July 24, 2014 - Initial release.
+
 ## License
 
 ActiveRecordUnion is dedicated to the public domain by its author, Brian Hempel. No rights are reserved. No restrictions are placed on the use of ActiveRecordUnion. That freedom also means, of course, that no warrenty of fitness is claimed; use ActiveRecordUnion at your own risk.
