@@ -61,30 +61,41 @@ describe ActiveRecord::Relation do
       expect{union.to_a}.to_not raise_error
     end
 
-    context "in SQLite" do
-      it "lets ORDER BY in query subselects throw a syntax error" do
-        union = User.new.posts.order(:created_at).union(
+    context "with ORDER BY in subselects" do
+      def union
+        User.new.posts.order(:created_at).union(
           Post.where("created_at > ?", Time.utc(2014, 7, 19, 0, 0, 0)).order(:created_at)
         ).order(:created_at)
-
-        expect(union.to_sql).to eq(
-          "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\"  WHERE \"posts\".\"user_id\" = ?  ORDER BY \"posts\".\"created_at\" ASC UNION SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000')  ORDER BY \"posts\".\"created_at\" ASC ) posts   ORDER BY \"posts\".\"created_at\" ASC"
-        )
-        expect{union.to_a}.to raise_error(ActiveRecord::StatementInvalid)
       end
-    end
 
-    context "not in SQLite" do
-      it "wraps query subselects in parentheses to allow ORDER BY clauses" do
-        Databases.with_postgres do
-          union = User.new.posts.order(:created_at).union(
-            Post.where("created_at > ?", Time.utc(2014, 7, 19, 0, 0, 0)).order(:created_at)
-          ).order(:created_at)
-
+      context "in SQLite" do
+        it "lets ORDER BY in query subselects throw a syntax error" do
           expect(union.to_sql).to eq(
-            "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\"  WHERE \"posts\".\"user_id\" = $1  ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000')  ORDER BY \"posts\".\"created_at\" ASC) ) posts   ORDER BY \"posts\".\"created_at\" ASC"
+            "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\"  WHERE \"posts\".\"user_id\" = ?  ORDER BY \"posts\".\"created_at\" ASC UNION SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000')  ORDER BY \"posts\".\"created_at\" ASC ) posts   ORDER BY \"posts\".\"created_at\" ASC"
           )
-          expect{union.to_a}.to_not raise_error
+          expect{union.to_a}.to raise_error(ActiveRecord::StatementInvalid)
+        end
+      end
+
+      context "in Postgres" do
+        it "wraps query subselects in parentheses to allow ORDER BY clauses" do
+          Databases.with_postgres do
+            expect(union.to_sql).to eq(
+              "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\"  WHERE \"posts\".\"user_id\" = $1  ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000')  ORDER BY \"posts\".\"created_at\" ASC) ) posts   ORDER BY \"posts\".\"created_at\" ASC"
+            )
+            expect{union.to_a}.to_not raise_error
+          end
+        end
+      end
+
+      context "in MySQL" do
+        it "wraps query subselects in parentheses to allow ORDER BY clauses" do
+          Databases.with_mysql do
+            expect(union.to_sql).to eq(
+              "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\"  WHERE \"posts\".\"user_id\" = $1  ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000')  ORDER BY \"posts\".\"created_at\" ASC) ) posts   ORDER BY \"posts\".\"created_at\" ASC"
+            )
+            expect{union.to_a}.to_not raise_error
+          end
         end
       end
     end
