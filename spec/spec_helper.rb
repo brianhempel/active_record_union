@@ -1,3 +1,6 @@
+require "bundler/setup"
+
+Bundler.require(:development)
 require "active_record_union"
 
 require "support/databases"

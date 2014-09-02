@@ -13,7 +13,7 @@ module Databases
     ActiveRecord::Base.establish_connection(
       adapter:  "postgresql"
     )
-    ActiveRecord::Base.connection.execute('CREATE DATABASE "test_active_record_union"') rescue nil
+    ActiveRecord::Base.connection.recreate_database("test_active_record_union")
     ActiveRecord::Base.establish_connection(
       adapter:  "postgresql",
       database: "test_active_record_union"
@@ -25,7 +25,7 @@ module Databases
     ActiveRecord::Base.establish_connection(
       adapter:  "mysql2"
     )
-    ActiveRecord::Base.connection.execute('CREATE DATABASE test_active_record_union') rescue nil
+    ActiveRecord::Base.connection.recreate_database("test_active_record_union")
     ActiveRecord::Base.establish_connection(
       adapter:  "mysql2",
       database: "test_active_record_union"
