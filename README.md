@@ -173,7 +173,7 @@ Public domain dedication is explained by the CC0 1.0 summary (and only the summa
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/active_record_union/fork )
+1. Fork it ( https://github.com/brianhempel/active_record_union/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Run the tests with `rspec`
 4. There is also a `bin/console` command to load up a REPL for playing around
