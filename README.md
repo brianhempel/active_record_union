@@ -169,7 +169,7 @@ This is a gem not a Rails pull request because the standard of code quality for 
 
 ActiveRecordUnion is dedicated to the public domain by its author, Brian Hempel. No rights are reserved. No restrictions are placed on the use of ActiveRecordUnion. That freedom also means, of course, that no warrenty of fitness is claimed; use ActiveRecordUnion at your own risk.
 
-Public domain dedication is explained by the CC0 1.0 summary (and only the summary) at https://creativecommons.org/publicdomain/zero/1.0/
+This public domain dedication follows the the CC0 1.0 at https://creativecommons.org/publicdomain/zero/1.0/
 
 ## Contributing
 
