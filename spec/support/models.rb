@@ -8,7 +8,7 @@ end unless defined?(User)
 ActiveRecord::Base.connection.create_table :posts, force: true do |t|
   t.integer   :user_id
   t.timestamp :published_at
-  t.timestamps
+  t.timestamps null: false
 end
 
 class Post < ActiveRecord::Base
