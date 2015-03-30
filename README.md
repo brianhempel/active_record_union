@@ -100,7 +100,7 @@ SELECT "posts".* FROM (
 
 ### UNION ALL
 
-By default, UNION will remove any duplicates from the result set. If you don't care about duplicates or you know that the two queries you are combining will not have duplicates, you call use UNION ALL to tell the database to skip its deduplication step. In some cases, this can give significant performance improvements.
+By default, UNION will remove any duplicates from the result set. If you don't care about duplicates or you know that the two queries you are combining will not have duplicates, you call use UNION ALL to tell the database to skip its deduplication step. In some cases this can give significant performance improvements.
 
 ```ruby
 user_1.posts.union_all(user_2.posts)
