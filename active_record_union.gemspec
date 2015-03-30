@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = ActiveRecordUnion::VERSION
   spec.authors       = ["Brian Hempel"]
   spec.email         = ["plasticchicken@gmail.com"]
-  spec.summary       = %q{UNIONs in ActiveRecord! Adds a proper union method to ActiveRecord::Relation.}
+  spec.summary       = %q{UNIONs in ActiveRecord! Adds proper union and union_all methods to ActiveRecord::Relation.}
   spec.description   = spec.summary
   spec.homepage      = "https://github.com/brianhempel/active_record_union"
   spec.license       = "Public Domain"
