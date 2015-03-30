@@ -7,6 +7,16 @@ Use unions on ActiveRecord scopes without ugliness.
 
 If you find yourself writing `pluck(:id)` and then feeding that into another query, you may be able to reduce the number of database requests by using a nested query or a UNION without writing crazy JOIN statements.
 
+Quick usage examples:
+
+```ruby
+current_user.posts.union(Post.published)
+current_user.posts.union(Post.published).where(id: [6, 7])
+current_user.posts.union("published_at < ?", Time.now)
+user_1.posts.union(user_2.posts).union(Post.published)
+user_1.posts.union_all(user_2.posts)
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
