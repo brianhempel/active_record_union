@@ -48,11 +48,11 @@ With ActiveRecordUnion, we can do:
 current_user.posts.union(Post.published)
 ```
 
-Which is equivalent to the following SQL: [<a href="#footnote-1">1</a>]
+Which is equivalent to the following SQL:
 
 ```sql
 SELECT "posts".* FROM (
-  SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?
+  SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = 1
   UNION
   SELECT "posts".* FROM "posts"  WHERE (published_at < '2014-07-19 16:04:21.918366')
 ) posts
@@ -65,7 +65,7 @@ current_user.posts.union(Post.published).where(id: [6, 7])
 ```
 ```sql
 SELECT "posts".* FROM (
-  SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?
+  SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = 1
   UNION
   SELECT "posts".* FROM "posts"  WHERE (published_at < '2014-07-19 16:06:04.460771')
 ) posts  WHERE "posts"."id" IN (6, 7)
@@ -89,16 +89,14 @@ user_1.posts.union(user_2.posts).union(Post.published)
 ```sql
 SELECT "posts".* FROM (
   SELECT "posts".* FROM (
-    SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?
+    SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = 1
     UNION
-    SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?
+    SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = 2
   ) posts
   UNION
   SELECT "posts".* FROM "posts"  WHERE (published_at < '2014-07-19 16:12:45.882648')
 ) posts
 ```
-
-<a name="footnote-1"></a>[1] Note: the `?` in the SQL is bound to the correct value when ActiveRecord executes the query. Also, the SQL examples here were generated for a SQLite database. The syntax generated for other databases may vary slightly.
 
 ### UNION ALL
 
@@ -133,11 +131,11 @@ current_user.posts.where(id: other_user.favorited_posts)
 ```
 ```sql
 SELECT "posts".* FROM "posts"
-  WHERE "posts"."user_id" = ?
+  WHERE "posts"."user_id" = 1
   AND "posts"."id" IN (
     SELECT "posts"."id"
       FROM "posts" INNER JOIN "user_favorited_posts" ON "posts"."id" = "user_favorited_posts"."post_id"
-      WHERE "user_favorited_posts"."user_id" = ?
+      WHERE "user_favorited_posts"."user_id" = 2
   )
 ```
 
@@ -148,7 +146,7 @@ current_user.posts.where(id: UserFavoritedPost.where(user_id: other_user.id).sel
 ```
 ```sql
 SELECT "posts".* FROM "posts"
-  WHERE "posts"."user_id" = ?
+  WHERE "posts"."user_id" = 1
   AND "posts"."id" IN (
     SELECT "user_favorited_posts"."post_id"
       FROM "user_favorited_posts"
@@ -164,7 +162,7 @@ Why does this gem exist?
 
 Right now in ActiveRecord, if we call `scope.union` we get an `Arel::Nodes::Union` object instead of an `ActiveRecord::Relation`.
 
-We could call `to_sql` on the Arel object and then use `find_by_sql`, but that's not super clean and if the original scopes included an association, then the `to_sql` may produce a query with values that need to be bound (represented by `?`s in the SQL) and we have to provide those ourselves. (E.g. `user.posts.to_sql` produces `SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?`.)
+We could call `to_sql` on the Arel object and then use `find_by_sql`, but that's not super clean. Also, on Rails 4.0 and 4.1 if the original scopes included an association then the `to_sql` may produce a query with values that need to be bound (represented by `?`s in the SQL) and we have to provide those ourselves. (E.g. `user.posts.to_sql` produces `SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = ?`.) Rails 4.2's `to_sql` replaces the bind values before showing the SQL string and thus can more readily be used with `find_by_sql`. (E.g. Rails 4.2 `to_sql` would say `WHERE "posts"."user_id" = 1` instead of `WHERE "posts"."user_id" = ?`.)
 
 While ActiveRecord may eventually have the ability to cleanly perform UNIONs, it's currently stalled. If you're interested, the relevant URLs as of July 2014 are:
 
