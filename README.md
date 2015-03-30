@@ -25,7 +25,7 @@ Or install it yourself as:
 
 ## Usage
 
-ActiveRecordUnion adds a `union` method to `ActiveRecord::Relation` so we can easily gather together queries on mutiple scopes.
+ActiveRecordUnion adds `union` and `union_all` methods to `ActiveRecord::Relation` so we can easily gather together queries on mutiple scopes.
 
 Consider some users with posts:
 
@@ -71,7 +71,7 @@ SELECT "posts".* FROM (
 ) posts  WHERE "posts"."id" IN (6, 7)
 ```
 
-The `union` method can also accepts anything that `where` does.
+The `union` method can also accept anything that `where` does.
 
 ```ruby
 current_user.posts.union("published_at < ?", Time.now)
@@ -99,6 +99,21 @@ SELECT "posts".* FROM (
 ```
 
 <a name="footnote-1"></a>[1] Note: the `?` in the SQL is bound to the correct value when ActiveRecord executes the query. Also, the SQL examples here were generated for a SQLite database. The syntax generated for other databases may vary slightly.
+
+### UNION ALL
+
+By default, UNION will remove any duplicates from the result set. If you don't care about duplicates or you know that the two queries you are combining will not have duplicates, you call use UNION ALL to tell the database to skip its deduplication step. In some cases, this can give significant performance improvements.
+
+```ruby
+user_1.posts.union_all(user_2.posts)
+```
+```sql
+SELECT "posts".* FROM (
+  SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = 1
+  UNION ALL
+  SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = 2
+) posts
+```
 
 ## Caveats
 
@@ -160,6 +175,8 @@ https://github.com/yakaz/rails/commit/29b8ebd187e0888d5e71b2e1e4a12334860bc76c
 This is a gem not a Rails pull request because the standard of code quality for a PR is a bit higher, and we'd have to wait for the PR to be merged and relased to use UNIONs. That said, the code here is fairly clean and it may end up in a PR sometime.
 
 ## Changelog
+
+**1.1.0** - Mar 29, 2015 - Add UNION ALL support, courtesy of [@pic](https://github.com/pic).
 
 **1.0.1** - Sept 2, 2014 - Allow ORDER BY in UNION subselects for databases that support it (not SQLite).
 
