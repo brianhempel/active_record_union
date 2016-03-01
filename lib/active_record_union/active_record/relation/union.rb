@@ -41,7 +41,7 @@ module ActiveRecord
         )
 
         relation = @klass.unscoped.from(from)
-        relation.bind_values = self.bind_values + self.arel.bind_values + other.bind_values + other.arel.bind_values
+        relation.bind_values = self.arel.bind_values + self.bind_values + other.arel.bind_values + other.bind_values
         relation
       end
 
