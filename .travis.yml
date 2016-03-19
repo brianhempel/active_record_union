@@ -1,8 +1,8 @@
 language: ruby
 addons:
-  postgresql: "9.3"
-before_script:
-  - psql -c 'create database travis;' -U postgres # "travis" is the UNIX username, and therefore the default database name on connection
+  postgresql: "9.4"
 rvm:
+  - 2.3.0
+  - 2.2.4
   - 2.1.2
   - 2.0.0
