@@ -51,6 +51,19 @@ describe ActiveRecord::Relation do
       expect(bind_values).to eq([1, 2, 3])
     end
 
+    it "binds values properly on joins" do
+      union = User.joins(:drafts).union(User.where(id: 11))
+
+      bind_values = (union.arel.bind_values + union.bind_values).map { |column, value| value }
+      expect(bind_values).to eq([true, 11])
+
+
+      expect(union.to_sql.squish).to eq(
+        "SELECT \"users\".* FROM ( SELECT \"users\".* FROM \"users\" INNER JOIN \"posts\" ON \"posts\".\"user_id\" = \"users\".\"id\" AND \"posts\".\"draft\" = 't' UNION SELECT \"users\".* FROM \"users\" WHERE \"users\".\"id\" = 11 ) \"users\""
+      )
+      expect{union.to_a}.to_not raise_error
+    end
+
     it "doesn't repeat default scopes" do
       expect(Time).to receive(:now) { Time.utc(2014, 7, 24, 0, 0, 0) }
 
