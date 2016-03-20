@@ -65,7 +65,7 @@ SELECT "posts".* FROM (
   SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = 1
   UNION
   SELECT "posts".* FROM "posts"  WHERE (published_at < '2014-07-19 16:04:21.918366')
-) posts
+) "posts"
 ```
 
 Because the `union` method returns another `ActiveRecord::Relation`, we can run further queries on the union.
@@ -78,7 +78,7 @@ SELECT "posts".* FROM (
   SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = 1
   UNION
   SELECT "posts".* FROM "posts"  WHERE (published_at < '2014-07-19 16:06:04.460771')
-) posts  WHERE "posts"."id" IN (6, 7)
+) "posts"  WHERE "posts"."id" IN (6, 7)
 ```
 
 The `union` method can also accept anything that `where` does.
@@ -102,10 +102,10 @@ SELECT "posts".* FROM (
     SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = 1
     UNION
     SELECT "posts".* FROM "posts"  WHERE "posts"."user_id" = 2
-  ) posts
+  ) "posts"
   UNION
   SELECT "posts".* FROM "posts"  WHERE (published_at < '2014-07-19 16:12:45.882648')
-) posts
+) "posts"
 ```
 
 ### UNION ALL
@@ -120,7 +120,7 @@ SELECT "posts".* FROM (
   SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = 1
   UNION ALL
   SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = 2
-) posts
+) "posts"
 ```
 
 ## Caveats
