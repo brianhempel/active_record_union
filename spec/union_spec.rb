@@ -127,14 +127,6 @@ describe ActiveRecord::Relation do
           "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (\"posts\".\"id\" = 2 OR \"posts\".\"id\" = 3) ) \"posts\""
         )
       end
-
-      it "multiple relations" do
-        union = User.new(id: 1).posts.union(Post.where(id: 2), Post.where(id: 3), Post.where(id: 4))
-
-        expect(union.to_sql.squish).to eq(
-          "SELECT \"posts\".* FROM ( ( ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 2 ) UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 3 ) UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 4 ) \"posts\""
-        )
-      end
     end
   end
 

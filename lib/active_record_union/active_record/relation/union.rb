@@ -18,31 +18,30 @@ module ActiveRecord
       private
 
       def set_operation(operation, relation_or_where_arg, *args)
-        others = if Relation === relation_or_where_arg
-          [relation_or_where_arg, *args]
+        other = if args.size == 0 && Relation === relation_or_where_arg
+          relation_or_where_arg
         else
-          [@klass.where(relation_or_where_arg, *args)]
+          @klass.where(relation_or_where_arg, *args)
         end
 
-        verify_relations_for_set_operation!(operation, self, *others)
+        verify_relations_for_set_operation!(operation, self, other)
 
         # Postgres allows ORDER BY in the UNION subqueries if each subquery is surrounded by parenthesis
         # but SQLite does not allow parens around the subqueries; you will have to explicitly do `relation.reorder(nil)` in SQLite
-        queries = if Arel::Visitors::SQLite === self.visitor
-                    [self.ast, *others.map(&:ast)]
-                  else
-                    [Arel::Nodes::Grouping.new(self.ast), *others.map { |other| Arel::Nodes::Grouping.new(other.ast) }]
-                  end
+        if Arel::Visitors::SQLite === self.visitor
+          left, right = self.ast, other.ast
+        else
+          left, right = Arel::Nodes::Grouping.new(self.ast), Arel::Nodes::Grouping.new(other.ast)
+        end
 
-        arel_class = SET_OPERATION_TO_AREL_CLASS[operation]
-        set = queries.reduce { |left, right| arel_class.new(left, right) }
+        set = SET_OPERATION_TO_AREL_CLASS[operation].new(left, right)
         from = Arel::Nodes::TableAlias.new(
           set,
           Arel::Nodes::SqlLiteral.new(@klass.quoted_table_name)
         )
 
         relation = @klass.unscoped.from(from)
-        relation.bind_values = self.bind_values + others.sum([], &:bind_values)
+        relation.bind_values = self.bind_values + other.bind_values
         relation
       end
 
