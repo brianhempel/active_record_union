@@ -184,6 +184,8 @@ This is a gem not a Rails pull request because the standard of code quality for 
 
 ## Changelog
 
+**1.1.1** - Mar 19, 2016 - Quote table name aliases properly. Reported by [@odedniv](https://github.com/odedniv).
+
 **1.1.0** - Mar 29, 2015 - Add UNION ALL support, courtesy of [@pic](https://github.com/pic).
 
 **1.0.1** - Sept 2, 2014 - Allow ORDER BY in UNION subselects for databases that support it (not SQLite).
