@@ -29,10 +29,10 @@ describe ActiveRecord::Relation do
       union = User.new(id: 1).posts.union(Post.where("created_at > ?", Time.utc(2014, 7, 19, 0, 0, 0)))
 
       expect(union.to_sql.squish).to eq(
-        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) posts"
+        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) \"posts\""
       )
       expect(union.arel.to_sql.squish).to eq(
-        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = ? UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) posts"
+        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = ? UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) \"posts\""
       )
       expect{union.to_a}.to_not raise_error
     end
@@ -59,7 +59,7 @@ describe ActiveRecord::Relation do
       union = PublishedPost.where("created_at > ?", Time.utc(2014, 7, 19, 0, 0, 0)).union(User.new(id: 1).posts)
 
       expect(union.to_sql.squish).to eq(
-        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE (published_at < '2014-07-24 00:00:00.000000') AND (created_at > '2014-07-19 00:00:00.000000') UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ) posts"
+        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE (published_at < '2014-07-24 00:00:00.000000') AND (created_at > '2014-07-19 00:00:00.000000') UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ) \"posts\""
       )
       expect{union.to_a}.to_not raise_error
     end
@@ -74,7 +74,7 @@ describe ActiveRecord::Relation do
       context "in SQLite" do
         it "lets ORDER BY in query subselects throw a syntax error" do
           expect(union.to_sql.squish).to eq(
-            "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ORDER BY \"posts\".\"created_at\" ASC UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ORDER BY \"posts\".\"created_at\" ASC ) posts ORDER BY \"posts\".\"created_at\" ASC"
+            "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ORDER BY \"posts\".\"created_at\" ASC UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ORDER BY \"posts\".\"created_at\" ASC ) \"posts\" ORDER BY \"posts\".\"created_at\" ASC"
           )
           expect{union.to_a}.to raise_error(ActiveRecord::StatementInvalid)
         end
@@ -84,7 +84,7 @@ describe ActiveRecord::Relation do
         it "wraps query subselects in parentheses to allow ORDER BY clauses" do
           Databases.with_postgres do
             expect(union.to_sql.squish).to eq(
-              "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = $1 ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000') ORDER BY \"posts\".\"created_at\" ASC) ) posts ORDER BY \"posts\".\"created_at\" ASC"
+              "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = $1 ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000') ORDER BY \"posts\".\"created_at\" ASC) ) \"posts\" ORDER BY \"posts\".\"created_at\" ASC"
             )
             expect{union.to_a}.to_not raise_error
           end
@@ -95,7 +95,7 @@ describe ActiveRecord::Relation do
         it "wraps query subselects in parentheses to allow ORDER BY clauses" do
           Databases.with_mysql do
             expect(union.to_sql.squish).to eq(
-              "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\"  WHERE \"posts\".\"user_id\" = $1  ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000')  ORDER BY \"posts\".\"created_at\" ASC) ) posts   ORDER BY \"posts\".\"created_at\" ASC"
+              "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\"  WHERE \"posts\".\"user_id\" = $1  ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\"  WHERE (created_at > '2014-07-19 00:00:00.000000')  ORDER BY \"posts\".\"created_at\" ASC) ) \"posts\"   ORDER BY \"posts\".\"created_at\" ASC"
             )
             expect{union.to_a}.to_not raise_error
           end
@@ -108,7 +108,7 @@ describe ActiveRecord::Relation do
         union = User.new(id: 1).posts.union(id: 2)
 
         expect(union.to_sql.squish).to eq(
-          "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 2 ) posts"
+          "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 2 ) \"posts\""
         )
       end
 
@@ -116,7 +116,7 @@ describe ActiveRecord::Relation do
         union = User.new(id: 1).posts.union("created_at > ?", Time.utc(2014, 7, 19, 0, 0, 0))
 
         expect(union.to_sql.squish).to eq(
-          "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) posts"
+          "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) \"posts\""
         )
       end
 
@@ -124,7 +124,15 @@ describe ActiveRecord::Relation do
         union = User.new(id: 1).posts.union(Post.arel_table[:id].eq(2).or(Post.arel_table[:id].eq(3)))
 
         expect(union.to_sql.squish).to eq(
-          "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (\"posts\".\"id\" = 2 OR \"posts\".\"id\" = 3) ) posts"
+          "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (\"posts\".\"id\" = 2 OR \"posts\".\"id\" = 3) ) \"posts\""
+        )
+      end
+
+      it "multiple relations" do
+        union = User.new(id: 1).posts.union(Post.where(id: 2), Post.where(id: 3), Post.where(id: 4))
+
+        expect(union.to_sql.squish).to eq(
+          "SELECT \"posts\".* FROM ( ( ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 2 ) UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 3 ) UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 4 ) \"posts\""
         )
       end
     end
@@ -135,7 +143,7 @@ describe ActiveRecord::Relation do
       union = User.new(id: 1).posts.union_all(Post.where("created_at > ?", Time.utc(2014, 7, 19, 0, 0, 0)))
 
       expect(union.to_sql.squish).to eq(
-        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION ALL SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) posts"
+        "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION ALL SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) \"posts\""
       )
       expect{union.to_a}.to_not raise_error
     end
