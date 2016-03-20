@@ -37,7 +37,7 @@ module ActiveRecord
         set = SET_OPERATION_TO_AREL_CLASS[operation].new(left, right)
         from = Arel::Nodes::TableAlias.new(
           set,
-          Arel::Nodes::SqlLiteral.new(@klass.quoted_table_name)
+          @klass.arel_table.name
         )
 
         relation = @klass.unscoped.from(from)
