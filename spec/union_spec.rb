@@ -43,7 +43,10 @@ describe ActiveRecord::Relation do
       user3 = User.new(id: 3)
 
       union = user1.posts.union(user2.posts).where.not(id: user3.posts)
-      bind_values = union.bind_values.map { |column, value| value }
+
+      # Inside ActiveRecord the bind value list is
+      # (union.arel.bind_values + union.bind_values)
+      bind_values = (union.arel.bind_values + union.bind_values).map { |column, value| value }
 
       expect(bind_values).to eq([1, 2, 3])
     end
