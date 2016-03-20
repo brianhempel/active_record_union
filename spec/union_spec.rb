@@ -113,6 +113,7 @@ describe ActiveRecord::Relation do
         expect(union.to_sql.squish).to eq(
           "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"id\" = 2 ) \"posts\""
         )
+        expect{union.to_a}.to_not raise_error
       end
 
       it "multiple arguments" do
@@ -121,6 +122,7 @@ describe ActiveRecord::Relation do
         expect(union.to_sql.squish).to eq(
           "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00.000000') ) \"posts\""
         )
+        expect{union.to_a}.to_not raise_error
       end
 
       it "arel" do
@@ -129,6 +131,7 @@ describe ActiveRecord::Relation do
         expect(union.to_sql.squish).to eq(
           "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 UNION SELECT \"posts\".* FROM \"posts\" WHERE (\"posts\".\"id\" = 2 OR \"posts\".\"id\" = 3) ) \"posts\""
         )
+        expect{union.to_a}.to_not raise_error
       end
     end
   end
