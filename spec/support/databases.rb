@@ -35,12 +35,14 @@ module Databases
 
   def with_postgres(&block)
     connect_to_postgres
+    yield
   ensure
     connect_to_sqlite
   end
 
   def with_mysql(&block)
     connect_to_mysql
+    yield
   ensure
     connect_to_sqlite
   end
