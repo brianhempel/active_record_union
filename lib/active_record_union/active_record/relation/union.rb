@@ -3,7 +3,7 @@ module ActiveRecord
     module Union
 
       SET_OPERATION_TO_AREL_CLASS = {
-        union: Arel::Nodes::Union,
+        union:     Arel::Nodes::Union,
         union_all: Arel::Nodes::UnionAll
       }
 
