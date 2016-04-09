@@ -3,15 +3,15 @@ module ActiveRecord
     module Union
 
       SET_OPERATION_TO_AREL_CLASS = {
-        union:     Arel::Nodes::Union,
-        union_all: Arel::Nodes::UnionAll
+          union:     Arel::Nodes::Union,
+          union_all: Arel::Nodes::UnionAll
       }
 
-      def  union(relation_or_where_arg, *args)
+      def union(relation_or_where_arg, *args)
         set_operation(:union, relation_or_where_arg, *args)
       end
 
-      def  union_all(relation_or_where_arg, *args)
+      def union_all(relation_or_where_arg, *args)
         set_operation(:union_all, relation_or_where_arg, *args)
       end
 
@@ -19,29 +19,30 @@ module ActiveRecord
 
       def set_operation(operation, relation_or_where_arg, *args)
         other = if args.size == 0 && Relation === relation_or_where_arg
-          relation_or_where_arg
-        else
-          @klass.where(relation_or_where_arg, *args)
-        end
+                  relation_or_where_arg
+                else
+                  @klass.where(relation_or_where_arg, *args)
+                end
 
         verify_relations_for_set_operation!(operation, self, other)
 
         # Postgres allows ORDER BY in the UNION subqueries if each subquery is surrounded by parenthesis
         # but SQLite does not allow parens around the subqueries; you will have to explicitly do `relation.reorder(nil)` in SQLite
-        if Arel::Visitors::SQLite === self.visitor
+        if Arel::Visitors::SQLite === self.connection.visitor
           left, right = self.ast, other.ast
         else
           left, right = Arel::Nodes::Grouping.new(self.ast), Arel::Nodes::Grouping.new(other.ast)
         end
 
-        set = SET_OPERATION_TO_AREL_CLASS[operation].new(left, right)
-        from = Arel::Nodes::TableAlias.new(
-          set,
-          @klass.arel_table.name
-        )
-
-        relation = @klass.unscoped.from(from)
-        relation.bind_values = self.arel.bind_values + self.bind_values + other.arel.bind_values + other.bind_values
+        set  = SET_OPERATION_TO_AREL_CLASS[operation].new(left, right)
+        from = Arel::Nodes::TableAlias.new(set, @klass.arel_table.name)
+        if ActiveRecord::VERSION::MAJOR >= 5
+          relation             = @klass.unscoped.spawn
+          relation.from_clause = UnionFromClause.new(from, nil, self.bound_attributes + other.bound_attributes)
+        else
+          relation             = @klass.unscoped.from(from)
+          relation.bind_values = self.arel.bind_values + self.bind_values + other.arel.bind_values + other.bind_values
+        end
         relation
       end
 
@@ -60,6 +61,19 @@ module ActiveRecord
         eager_load_relations = relations.select { |r| r.eager_load_values.any? }
         if eager_load_relations.any?
           raise ArgumentError.new("Cannot #{operation} relation with eager load.")
+        end
+      end
+
+      if ActiveRecord::VERSION::MAJOR >= 5
+        class UnionFromClause < ActiveRecord::Relation::FromClause
+          def initialize(value, name, bound_attributes)
+            super(value, name)
+            @bound_attributes = bound_attributes
+          end
+
+          def binds
+            @bound_attributes
+          end
         end
       end
     end

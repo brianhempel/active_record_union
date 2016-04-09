@@ -6,3 +6,20 @@ rvm:
   - 2.2.4
   - 2.1.8
   - 2.0.0
+cache: bundler
+bundler_args: --path ../../vendor/bundle --without debug
+gemfile:
+  - spec/gemfiles/rails_4_2.gemfile
+  - spec/gemfiles/rails_5_0.gemfile
+matrix:
+  exclude:
+  # Rails 5 requires Ruby 2.2+:
+  - rvm: 2.1.8
+    gemfile: spec/gemfiles/rails_5_0.gemfile
+  - rvm: 2.0.0
+    gemfile: spec/gemfiles/rails_5_0.gemfile
+env:
+  global:
+  - DB_USER=''
+  - DB_PASS=''
+script: bundle exec rspec
