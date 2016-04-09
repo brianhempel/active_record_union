@@ -204,7 +204,11 @@ This public domain dedication follows the the CC0 1.0 at https://creativecommons
 
 1. Fork it ( https://github.com/brianhempel/active_record_union/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Run the tests with `rspec`
+3. Run the tests:
+  1. Install MySQL and PostgreSQL.
+  2. You may need to create a `test_active_record_union` database on each under the default user.
+  3. Run `rake` to test with all supported Rails versions.
+  4. Run `rake test_rails_4_2` or `rake test_rails_5_0` to test a specific Rails version.
 4. There is also a `bin/console` command to load up a REPL for playing around
 5. Commit your changes (`git commit -am 'Add some feature'`)
 6. Push to the branch (`git push origin my-new-feature`)
