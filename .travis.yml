@@ -18,8 +18,6 @@ matrix:
     gemfile: spec/gemfiles/rails_5_0.gemfile
   - rvm: 2.0.0
     gemfile: spec/gemfiles/rails_5_0.gemfile
-  allow_failures:
-    - gemfile: spec/gemfiles/rails_5_0.gemfile
 env:
   global:
   - DB_USER=''
