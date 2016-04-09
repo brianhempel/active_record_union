@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+GREEN='\033[0;32m'
+RESET_COLOR='\033[0m'
+
+if [ -n "$1" ]; then cat <<'HELP'; exit; fi
+Usage: script/create-db-users
+Create the active_record_union database users for all the supported databases.
+If the `DB` environment variable is set, do the above only for that database.
+HELP
+
+USER='ar_union_gem'
+PASS='ar_union_gem'
+
+set -e
+log() { if [ -t 1 ]; then echo -e >&2 "${GREEN}create-db-users: $@${RESET_COLOR}"; else echo >&2 "$@"; fi }
+
+create_mysql_user() {
+  if mysql -s -u"$USER" -p"$PASS" -e '' 2>/dev/null; then return; fi
+  log "Creating MySQL '$USER' user. MySQL root password required."
+  mysql --verbose -uroot -p <<SQL
+GRANT ALL PRIVILEGES ON \`test_active_record_union\`.* TO '$USER'@'localhost';
+SQL
+}
+
+create_postgresql_user() {
+  if PGPASSWORD="$PASS" psql -h 127.0.0.1 postgres -U $USER -c ''; then return; fi
+  log "Creating Postgres '$USER' user."
+  local cmd='psql postgres'
+  if ! $cmd -c '' 2>/dev/null; then
+    log "sudo required:"
+    cmd="sudo -u ${PG_DAEMON_USER:-postgres} psql postgres"
+  fi
+  $cmd --echo-all <<SQL
+CREATE ROLE $USER LOGIN PASSWORD '$PASS';
+ALTER ROLE $USER CREATEDB;
+SQL
+}
+
+[ -z "$DB" -o "$DB" = 'mysql2' ] && create_mysql_user
+[ -z "$DB" -o "$DB" = 'postgresql' ] && create_postgresql_user

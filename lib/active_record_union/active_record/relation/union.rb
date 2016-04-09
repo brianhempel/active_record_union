@@ -28,7 +28,7 @@ module ActiveRecord
 
         # Postgres allows ORDER BY in the UNION subqueries if each subquery is surrounded by parenthesis
         # but SQLite does not allow parens around the subqueries; you will have to explicitly do `relation.reorder(nil)` in SQLite
-        if Arel::Visitors::SQLite === self.visitor
+        if Arel::Visitors::SQLite === self.connection.visitor
           left, right = self.ast, other.ast
         else
           left, right = Arel::Nodes::Grouping.new(self.ast), Arel::Nodes::Grouping.new(other.ast)
