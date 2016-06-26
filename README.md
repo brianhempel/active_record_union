@@ -184,6 +184,9 @@ This is a gem not a Rails pull request because the standard of code quality for 
 
 ## Changelog
 
+**1.2.0** - June 26, 2016
+  - Ready for Rails 5.0! Updates provided by [@glebm](https://github.com/glebm).
+
 **1.1.1** - Mar 19, 2016
   - Fix broken polymorphic associations and joins due to improper handling of bind values. Fix by [@efradelos](https://github.com/efradelos), reported by [@Machiaweliczny](https://github.com/Machiaweliczny) and [@seandougall](https://github.com/seandougall).
   - Quote table name aliases properly. Reported by [@odedniv](https://github.com/odedniv).
