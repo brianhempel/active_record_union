@@ -20,6 +20,11 @@ module TestTasks
     end
   end
 
+  def run_one(env, cmd = "bundle install && #{TEST_CMD}")
+    full_cmd = to_bash_cmd_with_env(cmd, env)
+    exec(full_cmd)
+  end
+
   def run(env, cmd)
     Bundler.with_clean_env do
       full_cmd = to_bash_cmd_with_env(cmd, env)
@@ -42,4 +47,15 @@ desc 'Test all Gemfiles'
 task :test_all_gemfiles do
   envs = TestTasks.gemfiles.map { |gemfile| { 'BUNDLE_GEMFILE' => gemfile } }
   TestTasks.run_all envs, "✓ Tests pass with all #{envs.size} gemfiles"
+end
+
+
+TestTasks.gemfiles.each do |gemfile|
+  rails_version_underscored = gemfile[/rails_(.+)\.gemfile/, 1]
+
+  desc "Test Rails #{rails_version_underscored.gsub("_", ".")}"
+  task :"test_rails_#{rails_version_underscored}" do
+    env = { 'BUNDLE_GEMFILE' => gemfile }
+    TestTasks.run_one(env)
+  end
 end
