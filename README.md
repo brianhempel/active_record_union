@@ -17,6 +17,8 @@ user_1.posts.union(user_2.posts).union(Post.published)
 user_1.posts.union_all(user_2.posts)
 ```
 
+ActiveRecordUnion is tested against Rails 4.2 and Rails 5.0. It may or may not work on Rails 4.0/4.1.
+
 ## Installation
 
 Add this line to your application's Gemfile:
