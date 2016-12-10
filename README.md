@@ -129,7 +129,7 @@ SELECT "posts".* FROM (
 
 There's a couple things to be aware of when using ActiveRecordUnion:
 
-1. ActiveRecordUnion with raise an error if you try to UNION any relations that do any preloading/eager-loading. There's no sensible way to do the preloading in the subselects. If enough people complain maybe we can change ActiveRecordUnion to let the queries run anyway but without preloading any records.
+1. ActiveRecordUnion will raise an error if you try to UNION any relations that do any preloading/eager-loading. There's no sensible way to do the preloading in the subselects. If enough people complain, maybe, we can change ActiveRecordUnion to let the queries run anyway but without preloading any records.
 2. There's no easy way to get SQLite to allow ORDER BY in the UNION subselects. If you get a syntax error, you can either write `my_relation.reorder(nil).union(other.reorder(nil))` or switch to Postgres.
 
 ## Another nifty way to reduce extra queries
