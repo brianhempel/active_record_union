@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe ActiveRecord::Relation do
   TIME     = Time.utc(2014, 7, 19, 0, 0, 0)
-  SQL_TIME = ActiveRecord::VERSION::MAJOR >= 5 ? "2014-07-19 00:00:00" : "2014-07-19 00:00:00.000000"
+  SQL_TIME = "2014-07-19 00:00:00"
 
   describe ".union" do
     it "returns an ActiveRecord::Relation" do
@@ -77,7 +77,7 @@ describe ActiveRecord::Relation do
 
     it "doesn't repeat default scopes" do
       expect(Time).to receive(:now) { Time.utc(2014, 7, 24, 0, 0, 0) }
-      sql_now = "2014-07-24 00:00:00#{".000000" if ActiveRecord::VERSION::MAJOR < 5}"
+      sql_now = '2014-07-24 00:00:00'
 
       class PublishedPost < ActiveRecord::Base
         self.table_name = "posts"
