@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in active_record_union.gemspec
 gemspec
 
-gem 'rails', '~> 5.0.0'
+gem 'rails', '~> 5.1.0'
 
 # On Rails < 5.2, only pg < v1 is supported. See:
 # https://github.com/rails/rails/pull/31671

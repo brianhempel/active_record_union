@@ -41,7 +41,11 @@ describe ActiveRecord::Relation do
     end
 
     def bind_values_from_relation(relation)
-      if ActiveRecord::VERSION::MAJOR >= 5
+      if ActiveRecord.gem_version >= Gem::Version.new('5.2.0.beta2')
+        relation.arel_table.class.engine.connection.visitor.accept(
+          relation.arel.ast, Arel::Collectors::Bind.new
+        ).value.map(&:value)
+      elsif ActiveRecord::VERSION::MAJOR >= 5
         relation.bound_attributes.map { |a| a.value_for_database }
       else
         (relation.arel.bind_values + relation.bind_values).map { |_column, value| value }

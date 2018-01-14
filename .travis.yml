@@ -2,18 +2,10 @@ language: ruby
 addons:
   postgresql: "9.4"
 rvm:
-  - 2.3.1
-  - 2.2.5
-  - 2.1.8
-  - 2.0.0
+  - 2.3.6
 gemfile:
   - rails_4_2.gemfile
   - rails_5_0.gemfile
-matrix:
-  exclude:
-  # Rails 5 requires Ruby 2.2+:
-  - rvm: 2.1.8
-    gemfile: rails_5_0.gemfile
-  - rvm: 2.0.0
-    gemfile: rails_5_0.gemfile
+  - rails_5_1.gemfile
+  - rails_5_2.gemfile
 script: bundle exec rspec
