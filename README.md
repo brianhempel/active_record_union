@@ -211,9 +211,9 @@ This public domain dedication follows the the CC0 1.0 at https://creativecommons
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Run the tests:
   1. Install MySQL and PostgreSQL.
-  2. You may need to create a `test_active_record_union` database on each under the default user.
-  3. Run `rake` to test with all supported Rails versions.
-  4. Run `rake test_rails_4_2` or `rake test_rails_5_0` to test a specific Rails version.
+  2. You need to be able to connect to a local MySQL and Postgres database as the default user, so the specs can create a `test_active_record_union` database. From a vanilla install of MariaDB from Homebrew, this just works. For Postgres installed by Homebrew, you may need to run `$ echo "create database my_computer_user_name;" | psql postgres` since the initial database created by Homebrew is named "postgres" but PG defaults to connecting to a database named after your username.
+  3. Run `rake` to test with all supported Rails versions. All needed dependencies will be installed via Bundler (`gem install bundler` if you happen not to have Bundler yet).
+  4. Run `rake test_rails_4_2` or `rake test_rails_5_2` etc. to test a specific Rails version.
 4. There is also a `bin/console` command to load up a REPL for playing around
 5. Commit your changes (`git commit -am 'Add some feature'`)
 6. Push to the branch (`git push origin my-new-feature`)
