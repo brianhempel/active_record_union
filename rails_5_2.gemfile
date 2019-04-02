@@ -3,9 +3,8 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in active_record_union.gemspec
 gemspec
 
-# pg v1.0+ compatibility, https://github.com/rails/rails/pull/31671:
 gem 'rails', '~> 5.2.0'
 
 gem 'pg'
 
-gem 'sqlite3'
+gem 'sqlite3', '~> 1.4.0'
