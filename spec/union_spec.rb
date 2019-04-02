@@ -105,9 +105,15 @@ describe ActiveRecord::Relation do
 
       context "in SQLite" do
         it "lets ORDER BY in query subselects throw a syntax error" do
-          expect(union.to_sql.squish).to eq(
-            "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ORDER BY \"posts\".\"created_at\" ASC UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '#{SQL_TIME}') ORDER BY \"posts\".\"created_at\" ASC ) \"posts\" ORDER BY \"posts\".\"created_at\" ASC"
-          )
+          if ([ActiveRecord::VERSION::MAJOR, ActiveRecord::VERSION::MINOR] <=> [5, 2]) >= 0
+            expect(union.to_sql.squish).to eq(
+              "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ORDER BY \"posts\".\"created_at\" ASC UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00') ORDER BY \"posts\".\"created_at\" ASC ) \"posts\" ORDER BY \"created_at\" ASC"
+            )
+          else
+            expect(union.to_sql.squish).to eq(
+              "SELECT \"posts\".* FROM ( SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ORDER BY \"posts\".\"created_at\" ASC UNION SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '#{SQL_TIME}') ORDER BY \"posts\".\"created_at\" ASC ) \"posts\" ORDER BY \"posts\".\"created_at\" ASC"
+            )
+          end
           expect{union.to_a}.to raise_error(ActiveRecord::StatementInvalid)
         end
       end
@@ -115,9 +121,15 @@ describe ActiveRecord::Relation do
       context "in Postgres" do
         it "wraps query subselects in parentheses to allow ORDER BY clauses" do
           Databases.with_postgres do
-            expect(union.to_sql.squish).to eq(
-              "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '#{SQL_TIME}') ORDER BY \"posts\".\"created_at\" ASC) ) \"posts\" ORDER BY \"posts\".\"created_at\" ASC"
-            )
+            if ([ActiveRecord::VERSION::MAJOR, ActiveRecord::VERSION::MINOR] <=> [5, 2]) >= 0
+              expect(union.to_sql.squish).to eq(
+                "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '2014-07-19 00:00:00') ORDER BY \"posts\".\"created_at\" ASC) ) \"posts\" ORDER BY \"created_at\" ASC"
+              )
+            else
+              expect(union.to_sql.squish).to eq(
+                "SELECT \"posts\".* FROM ( (SELECT \"posts\".* FROM \"posts\" WHERE \"posts\".\"user_id\" = 1 ORDER BY \"posts\".\"created_at\" ASC) UNION (SELECT \"posts\".* FROM \"posts\" WHERE (created_at > '#{SQL_TIME}') ORDER BY \"posts\".\"created_at\" ASC) ) \"posts\" ORDER BY \"posts\".\"created_at\" ASC"
+              )
+            end
             expect{union.to_a}.to_not raise_error
           end
         end
@@ -126,9 +138,15 @@ describe ActiveRecord::Relation do
       context "in MySQL" do
         it "wraps query subselects in parentheses to allow ORDER BY clauses" do
           Databases.with_mysql do
-            expect(union.to_sql.squish).to eq(
-              "SELECT `posts`.* FROM ( (SELECT `posts`.* FROM `posts` WHERE `posts`.`user_id` = 1 ORDER BY `posts`.`created_at` ASC) UNION (SELECT `posts`.* FROM `posts` WHERE (created_at > '#{SQL_TIME}') ORDER BY `posts`.`created_at` ASC) ) `posts` ORDER BY `posts`.`created_at` ASC"
-            )
+            if ([ActiveRecord::VERSION::MAJOR, ActiveRecord::VERSION::MINOR] <=> [5, 2]) >= 0
+              expect(union.to_sql.squish).to eq(
+                "SELECT `posts`.* FROM ( (SELECT `posts`.* FROM `posts` WHERE `posts`.`user_id` = 1 ORDER BY `posts`.`created_at` ASC) UNION (SELECT `posts`.* FROM `posts` WHERE (created_at > '2014-07-19 00:00:00') ORDER BY `posts`.`created_at` ASC) ) `posts` ORDER BY `created_at` ASC"
+              )
+            else
+              expect(union.to_sql.squish).to eq(
+                "SELECT `posts`.* FROM ( (SELECT `posts`.* FROM `posts` WHERE `posts`.`user_id` = 1 ORDER BY `posts`.`created_at` ASC) UNION (SELECT `posts`.* FROM `posts` WHERE (created_at > '#{SQL_TIME}') ORDER BY `posts`.`created_at` ASC) ) `posts` ORDER BY `posts`.`created_at` ASC"
+              )
+            end
             expect{union.to_a}.to_not raise_error
           end
         end
