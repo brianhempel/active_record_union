@@ -17,7 +17,7 @@ user_1.posts.union(user_2.posts).union(Post.published)
 user_1.posts.union_all(user_2.posts)
 ```
 
-ActiveRecordUnion is tested against Rails 4.2 and Rails 5.0. It may or may not work on Rails 4.0/4.1.
+ActiveRecordUnion is tested against Rails 4.2, 5.0, 5.1, and 5.2. It may or may not work on Rails 4.0/4.1.
 
 If you are using Postgres, you might alternatively check out [ActiveRecordExtended](https://github.com/georgekaraszi/ActiveRecordExtended) which includes support for unions as well as other goodies.
 
