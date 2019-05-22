@@ -2,16 +2,11 @@ module ActiveRecord
   class Relation
     module Intersect
       SET_OPERATION_TO_AREL_CLASS = {
-        intersect:     Arel::Nodes::Intersect,
-        intersect_all: Arel::Nodes::IntersectAll
+        intersect:     Arel::Nodes::Intersect
       }.freeze
 
       def intersect(relation_or_where_arg, *args)
         set_operation(:intersect, relation_or_where_arg, *args)
-      end
-
-      def intersect_all(relation_or_where_arg, *args)
-        set_operation(:intersect_all, relation_or_where_arg, *args)
       end
 
       private
