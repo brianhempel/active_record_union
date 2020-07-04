@@ -7,4 +7,5 @@ gemfile:
   - rails_5_0.gemfile
   - rails_5_1.gemfile
   - rails_5_2.gemfile
+  - rails_6_0.gemfile
 script: bundle exec rspec
