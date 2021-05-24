@@ -2,7 +2,7 @@ language: ruby
 addons:
   postgresql: "9.4"
 rvm:
-  - 2.3.6
+  - 2.5.9
 gemfile:
   - rails_5_0.gemfile
   - rails_5_1.gemfile
