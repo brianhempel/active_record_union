@@ -60,7 +60,6 @@ jobs:
     env:
       BUNDLE_GEMFILE: "rails_${{ matrix.rails }}.gemfile"
       DB_HOST: 127.0.0.1
-      MYSQL_ROOT_PASSWORD: active_record_union
     steps:
       - uses: actions/checkout@v4
 
@@ -69,5 +68,4 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true # install gems and cache
 
-      - run: bin/create-db-users
       - run: bundle exec rspec --force-color --format d
