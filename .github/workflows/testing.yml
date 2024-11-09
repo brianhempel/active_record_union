@@ -57,6 +57,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: "rails_${{ matrix.rails }}.gemfile"
       DB_HOST: 127.0.0.1
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DB: active_record_union
       MYSQL_USER: root
       MYSQL_PASSWORD: active_record_union
