@@ -4,23 +4,25 @@ GREEN='\033[0;32m'
 RESET_COLOR='\033[0m'
 
 if [ -n "$1" ]; then cat <<'HELP'; exit; fi
-Usage: script/create-db-users
+Usage: bin/create-db-users
 Create the active_record_union database users for all the supported databases.
 If the `DB` environment variable is set, do the above only for that database.
 HELP
 
 USER='active_record_union'
 PASS='active_record_union'
+DB_HOST=${DB_HOST:-localhost}
 
 set -e
 log() { if [ -t 1 ]; then echo -e >&2 "${GREEN}create-db-users: $@${RESET_COLOR}"; else echo >&2 "$@"; fi }
 
 create_mysql_user() {
+  if [ -n "$MYSQL_ROOT_PASSWORD" ]; then PASS_ARG="--password=$MYSQL_ROOT_PASSWORD"; else PASS_ARG="-p"; fi
   if mysql -s -u"$USER" -p"$PASS" -e '' 2>/dev/null; then return; fi
   log "Creating MySQL '$USER' user. MySQL root password required."
-  mysql --verbose -uroot -p <<SQL
-CREATE USER '$USER'@'localhost' IDENTIFIED BY '$PASS';
-GRANT ALL PRIVILEGES ON \`test_active_record_union\`.* TO '$USER'@'localhost';
+  mysql --verbose -uroot $PASS_ARG <<SQL
+CREATE USER '$USER'@'$DB_HOST' IDENTIFIED BY '$PASS';
+GRANT ALL PRIVILEGES ON \`test_active_record_union\`.* TO '$USER'@'$DB_HOST';
 SQL
 }
 

@@ -60,6 +60,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: "rails_${{ matrix.rails }}.gemfile"
       DB_HOST: 127.0.0.1
+      MYSQL_ROOT_PASSWORD: active_record_union
     steps:
       - uses: actions/checkout@v4
 
