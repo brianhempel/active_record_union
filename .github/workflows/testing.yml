@@ -68,4 +68,5 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true # install gems and cache
 
+      - run: bin/create-db-users
       - run: bundle exec rspec --force-color --format d
