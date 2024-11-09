@@ -41,41 +41,8 @@ module ActiveRecord
         build_union_relation(from, other)
       end
 
-      if ActiveRecord.gem_version >= Gem::Version.new('5.2.0.beta2')
-        # Since Rails 5.2, binds are maintained only in the Arel AST.
-        def build_union_relation(arel_table_alias, _other)
-          self.klass.unscoped.from(arel_table_alias)
-        end
-      elsif ActiveRecord::VERSION::MAJOR >= 5
-        # In Rails >= 5.0, < 5.2, binds are maintained only in ActiveRecord
-        # relations and clauses.
-        def build_union_relation(arel_table_alias, other)
-          relation = self.klass.unscoped.spawn
-          relation.from_clause =
-            UnionFromClause.new(arel_table_alias, nil,
-                                self.bound_attributes + other.bound_attributes)
-          relation
-        end
-
-        class UnionFromClause < ActiveRecord::Relation::FromClause
-          def initialize(value, name, bound_attributes)
-            super(value, name)
-            @bound_attributes = bound_attributes
-          end
-
-          def binds
-            @bound_attributes
-          end
-        end
-      else
-        # In Rails 4.x, binds are maintained in both ActiveRecord relations and
-        # clauses and also in their Arel ASTs.
-        def build_union_relation(arel_table_alias, other)
-          relation = self.klass.unscoped.from(arel_table_alias)
-          relation.bind_values = self.arel.bind_values + self.bind_values +
-                                 other.arel.bind_values + other.bind_values
-          relation
-        end
+      def build_union_relation(arel_table_alias, _other)
+        self.klass.unscoped.from(arel_table_alias)
       end
 
       def verify_relations_for_set_operation!(operation, *relations)

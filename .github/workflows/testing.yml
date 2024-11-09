@@ -40,8 +40,6 @@ jobs:
         # just define specific versions for each rails version
         include:
           - ruby: 2.6
-            rails: 5.2
-          - ruby: 2.6
             rails: "6.0"
           - ruby: "3.0"
             rails: 6.1
