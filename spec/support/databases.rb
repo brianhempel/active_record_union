@@ -12,16 +12,16 @@ module Databases
   def connect_to_postgres
     ActiveRecord::Base.establish_connection(
       adapter:  "postgresql",
-      username: ENV.fetch('POSTGRES_USER', 'active_record_union'),
-      password: ENV.fetch('POSTGRES_PASSWORD', 'active_record_union')
+      username: ENV.fetch("POSTGRES_USER", 'active_record_union'),
+      password: ENV.fetch("POSTGRES_PASSWORD", 'active_record_union')
     )
     try_to_drop_database
     ActiveRecord::Base.connection.create_database("test_active_record_union")
     ActiveRecord::Base.establish_connection(
       adapter:  "postgresql",
-      database: "test_active_record_union",
-      username: ENV.fetch('POSTGRES_USER', 'active_record_union'),
-      password: ENV.fetch('POSTGRES_PASSWORD', 'active_record_union')
+      database: ENV.fetch("POSTGRES_DB", "test_active_record_union"),
+      username: ENV.fetch("POSTGRES_USER", 'active_record_union'),
+      password: ENV.fetch("POSTGRES_PASSWORD", 'active_record_union')
     )
     load("support/models.rb")
   end
@@ -39,15 +39,15 @@ module Databases
   def connect_to_mysql
     ActiveRecord::Base.establish_connection(
       adapter:  "mysql2",
-      username: ENV.fetch('MYSQL_USER', 'active_record_union'),
-      password: ENV.fetch('MYSQL_PASSWORD', 'active_record_union')
+      username: ENV.fetch("MYSQL_USER", "active_record_union"),
+      password: ENV.fetch("MYSQL_PASSWORD", "active_record_union")
     )
     ActiveRecord::Base.connection.recreate_database("test_active_record_union")
     ActiveRecord::Base.establish_connection(
       adapter:  "mysql2",
-      database: "test_active_record_union",
-      username: ENV.fetch('MYSQL_USERNAME', 'active_record_union'),
-      password: ENV.fetch('MYSQL_PASSWORD', 'active_record_union')
+      database: ENV.fetch("MYSQL_DB", "test_active_record_union"),
+      username: ENV.fetch("MYSQL_USERNAME", "active_record_union"),
+      password: ENV.fetch("MYSQL_PASSWORD", "active_record_union")
     )
     load("support/models.rb")
   end

@@ -6,9 +6,12 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       postgresql:
         image: postgres
+        ports:
+          - 5432:5432
         env:
           POSTGRES_DB: test_active_record_union
           POSTGRES_USER: active_record_union
@@ -18,10 +21,13 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_HOST: "%"
-          MYSQL_DATABASE: test_active_record_union
+          MYSQL_DB: test_active_record_union
           MYSQL_USER: active_record_union
           MYSQL_PASSWORD: active_record_union
           MYSQL_ROOT_PASSWORD: active_record_union
+        ports:
+          - "3306:3306"
+
     strategy:
       fail-fast: false
       matrix:
@@ -55,4 +61,4 @@ jobs:
           bundler-cache: true # install gems and cache
 
       - run: bundle install
-      - run: bundle exec rspec
+      - run: bundle exec rspec --color
