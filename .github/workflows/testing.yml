@@ -12,6 +12,11 @@ jobs:
         image: postgres
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         env:
           POSTGRES_DB: test_active_record_union
           POSTGRES_USER: active_record_union
@@ -25,17 +30,19 @@ jobs:
           MYSQL_USER: active_record_union
           MYSQL_PASSWORD: active_record_union
           MYSQL_ROOT_PASSWORD: active_record_union
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
         ports:
           - "3306:3306"
 
     strategy:
       fail-fast: false
       matrix:
-#        rails: ["5.2", "6.0", "6.1", "7.0", "7.1", "7.2", "8.0"]
-#        ruby: ["2.5", "2.6", "3.0", "3.1", "3.2", "3.3"]
         # just define specific versions for each rails version
         include:
-          - ruby: 2.5
+          - ruby: 2.6
             rails: 5.2
           - ruby: 2.6
             rails: "6.0"
@@ -52,6 +59,7 @@ jobs:
 
     env:
       BUNDLE_GEMFILE: "rails_${{ matrix.rails }}.gemfile"
+      DB_HOST: 127.0.0.1
     steps:
       - uses: actions/checkout@v4
 
