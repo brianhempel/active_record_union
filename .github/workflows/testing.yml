@@ -25,10 +25,7 @@ jobs:
       mysql2:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_HOST: "%"
-          MYSQL_DB: active_record_union
-          MYSQL_USER: active_record_union
-          MYSQL_PASSWORD: active_record_union
+          MYSQL_DATABASE: active_record_union
           MYSQL_ROOT_PASSWORD: active_record_union
         options: >-
           --health-cmd "mysqladmin ping"
@@ -60,6 +57,9 @@ jobs:
     env:
       BUNDLE_GEMFILE: "rails_${{ matrix.rails }}.gemfile"
       DB_HOST: 127.0.0.1
+      MYSQL_DB: active_record_union
+      MYSQL_USER: root
+      MYSQL_PASSWORD: active_record_union
     steps:
       - uses: actions/checkout@v4
 
