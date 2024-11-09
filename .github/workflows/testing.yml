@@ -18,7 +18,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         env:
-          POSTGRES_DB: test_active_record_union
+          POSTGRES_DB: active_record_union
           POSTGRES_USER: active_record_union
           POSTGRES_PASSWORD: active_record_union
 
@@ -26,7 +26,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_HOST: "%"
-          MYSQL_DB: test_active_record_union
+          MYSQL_DB: active_record_union
           MYSQL_USER: active_record_union
           MYSQL_PASSWORD: active_record_union
           MYSQL_ROOT_PASSWORD: active_record_union
