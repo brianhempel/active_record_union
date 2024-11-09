@@ -49,7 +49,7 @@ module Databases
     ActiveRecord::Base.establish_connection(
       adapter:  "mysql2",
       host: ENV.fetch('DB_HOST', 'localhost'),
-      username: ENV.fetch("MYSQL_USERNAME", "active_record_union"),
+      username: ENV.fetch("MYSQL_USER", "active_record_union"),
       password: ENV.fetch("MYSQL_PASSWORD", "active_record_union"),
       database: ENV.fetch("MYSQL_DB", "test_active_record_union")
     )
