@@ -41,8 +41,10 @@ describe ActiveRecord::Relation do
     end
 
     def bind_values_from_relation(relation)
+      collector = Arel::Collectors::Bind.new
+      collector.define_singleton_method(:preparable=) { |_preparable| } if ActiveRecord.version.between?(Gem::Version.new("6.1.0"), Gem::Version.new("7.2.99"))
       relation.arel_table.class.engine.connection.visitor.accept(
-        relation.arel.ast, Arel::Collectors::Bind.new
+        relation.arel.ast, collector
       ).value.map(&:value)
     end
 
