@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe ActiveRecord::Relation do
   TIME     = Time.utc(2014, 7, 19, 0, 0, 0)
-  SQL_TIME = ActiveRecord::VERSION::MAJOR >= 5 ? "2014-07-19 00:00:00" : "2014-07-19 00:00:00.000000"
+  SQL_TIME = "2014-07-19 00:00:00"
 
   describe ".union" do
     it "returns an ActiveRecord::Relation" do
