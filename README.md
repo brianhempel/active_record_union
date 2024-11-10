@@ -17,7 +17,7 @@ user_1.posts.union(user_2.posts).union(Post.published)
 user_1.posts.union_all(user_2.posts)
 ```
 
-ActiveRecordUnion is tested against Rails 5.0, 5.1, and 5.2. It should also work on Rails 4.2. It may or may not work on Rails 4.0/4.1.
+ActiveRecordUnion is tested against Rails 6.0, 6.1, 7.0, 7.1, 7.2 and 8.0.
 
 If you are using Postgres, you might alternatively check out [ActiveRecordExtended](https://github.com/georgekaraszi/ActiveRecordExtended) which includes support for unions as well as other goodies.
 
@@ -216,9 +216,9 @@ This public domain dedication follows the the CC0 1.0 at https://creativecommons
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Run the tests:
   1. Install MySQL and PostgreSQL.
-  2. You need to be able to connect to a local MySQL and Postgres database as the default user, so the specs can create a `test_active_record_union` database. From a vanilla install of MariaDB from Homebrew, this just works. For Postgres installed by Homebrew, you may need to run `$ echo "create database my_computer_user_name;" | psql postgres` since the initial database created by Homebrew is named "postgres" but PG defaults to connecting to a database named after your username.
+  2. You need to be able to connect to a local MySQL and Postgres database as the default user, so the specs can create a `test_active_record_union` database. To set up the users this test expects, execute `bin/create-db-users` (or set the environment variables referenced in `spec/support/databases.rb`).
   3. Run `rake` to test with all supported Rails versions. All needed dependencies will be installed via Bundler (`gem install bundler` if you happen not to have Bundler yet).
-  4. Run `rake test_rails_4_2` or `rake test_rails_5_2` etc. to test a specific Rails version.
+  4. Run `rake test_rails_8_0` or `rake test_rails_7_2` etc. to test a specific Rails version.
 4. There is also a `bin/console` command to load up a REPL for playing around
 5. Commit your changes (`git commit -am 'Add some feature'`)
 6. Push to the branch (`git push origin my-new-feature`)

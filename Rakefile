@@ -51,10 +51,10 @@ end
 
 
 TestTasks.gemfiles.each do |gemfile|
-  rails_version_underscored = gemfile[/rails_(.+)\.gemfile/, 1]
+  rails_version = gemfile[/rails_(.+)\.gemfile/, 1]
 
-  desc "Test Rails #{rails_version_underscored.gsub("_", ".")}"
-  task :"test_rails_#{rails_version_underscored}" do
+  desc "Test Rails #{rails_version}"
+  task :"test_rails_#{rails_version.gsub(".", "_")}" do
     env = { 'BUNDLE_GEMFILE' => gemfile }
     TestTasks.run_one(env)
   end
