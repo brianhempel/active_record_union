@@ -13,7 +13,8 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/brianhempel/active_record_union"
   spec.license       = "Public Domain"
 
-  spec.files         = `git ls-files -z`.split("\x0")
+  spec.files         = `git ls-files lib`.split($/) + ["LICENSE.txt", "README.md"]
+
   # spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/}) + spec.files.grep(%r{^bin/})
   spec.require_paths = ["lib"]
